@@ -110,7 +110,7 @@ resource "alicloud_slb_server_group_server_attachment" "http_server_attachment" 
   count = var.env_name == "dev" ? 1 : 0
   server_group_id = alicloud_slb_server_group.http-default[count.index].id
   server_id       = alicloud_instance.dev_ecs_instance_1[count.index].id
-  port            = 8080
+  port            = 80
   weight          = 0
 }
 

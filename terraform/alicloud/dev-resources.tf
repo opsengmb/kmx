@@ -44,12 +44,14 @@ resource "alicloud_slb_acl" "acl" {
   ip_version = "ipv4"
 }
 
+/*
 resource "alicloud_slb_acl_entry_attachment" "allow-all" {
   count = var.env_name == "dev" ? 1 : 0
   acl_id  = alicloud_slb_acl.acl[count.index].id
   entry   = "0.0.0.0/0"
   comment = "Allow all"
 }
+*/
 
 resource "alicloud_slb_server_group" "default" {
   count = var.env_name == "dev" ? 1 : 0

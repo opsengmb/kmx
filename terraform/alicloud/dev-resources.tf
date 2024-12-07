@@ -99,6 +99,20 @@ resource "alicloud_slb_server_group_server_attachment" "server_attachment" {
   weight          = 0
 }
 
+// listner http
+resource "alicloud_slb_server_group" "http-default" {
+  count = var.env_name == "dev" ? 1 : 0
+  load_balancer_id = alicloud_slb_load_balancer.clb[count.index].id
+  name             = "${var.env_name}-${var.project}-clb-server-attachment"
+}
+
+resource "alicloud_slb_server_group_server_attachment" "http_server_attachment" {
+  count = var.env_name == "dev" ? 1 : 0
+  server_group_id = alicloud_slb_server_group.http-default[count.index].id
+  server_id       = alicloud_instance.dev_ecs_instance_1[count.index].id
+  port            = 8080
+  weight          = 0
+}
 
 resource "alicloud_security_group" "dev-sg" {
   count = var.env_name == "dev" ? 1 : 0

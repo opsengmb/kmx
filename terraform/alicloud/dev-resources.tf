@@ -18,8 +18,6 @@ resource "alicloud_slb_listener" "listener" {
   frontend_port             = 8080
   protocol                  = "tcp"
   bandwidth                 = -1
-  sticky_session            = "on"
-  sticky_session_type       = "insert"
   cookie_timeout            = 86400
   cookie                    = "tfslblistenercookie"
   health_check              = "on"
@@ -54,7 +52,7 @@ resource "alicloud_slb_listener" "http-listener" {
   cookie                    = "tfslblistenercookie"
   health_check              = "on"
   health_check_connect_port = 80
-  health_check_type         = "tcp"
+  health_check_type         = "http"
   unhealthy_threshold       = 8
   health_check_timeout      = 8
   health_check_interval     = 5
@@ -88,16 +86,6 @@ resource "alicloud_slb_acl_entry_attachment" "allow-all" {
 */
 
 // listener tcp
-
-resource "alicloud_slb_rule" "default" {
-  count = var.env_name == "dev" ? 1 : 0
-  load_balancer_id = alicloud_slb_load_balancer.clb[count.index].id
-  frontend_port    = alicloud_slb_listener.listener[count.index].frontend_port
-  name             = "${var.env_name}-${var.project}-clb-server-tcp-rule"
-  url              = "/"
-  server_group_id  = alicloud_slb_server_group.default[count.index].id
-}
-
 resource "alicloud_slb_server_group" "default" {
   count = var.env_name == "dev" ? 1 : 0
   load_balancer_id = alicloud_slb_load_balancer.clb[count.index].id
@@ -109,20 +97,10 @@ resource "alicloud_slb_server_group_server_attachment" "server_attachment" {
   server_group_id = alicloud_slb_server_group.default[count.index].id
   server_id       = alicloud_instance.dev_ecs_instance_1[count.index].id
   port            = 8080
-  weight          = 0
+  weight          = 100
 }
 
 // listner http
-resource "alicloud_slb_rule" "http-default" {
-  count = var.env_name == "dev" ? 1 : 0
-  load_balancer_id = alicloud_slb_load_balancer.clb[count.index].id
-  frontend_port    = alicloud_slb_listener.http-listener[count.index].frontend_port
-  name             = "${var.env_name}-${var.project}-clb-server-http-rule"
-  url              = "/"
-  server_group_id  = alicloud_slb_server_group.http-default[count.index].id
-}
-
-
 resource "alicloud_slb_server_group" "http-default" {
   count = var.env_name == "dev" ? 1 : 0
   load_balancer_id = alicloud_slb_load_balancer.clb[count.index].id
@@ -134,7 +112,7 @@ resource "alicloud_slb_server_group_server_attachment" "http_server_attachment" 
   server_group_id = alicloud_slb_server_group.http-default[count.index].id
   server_id       = alicloud_instance.dev_ecs_instance_1[count.index].id
   port            = 80
-  weight          = 0
+  weight          = 100
 }
 
 resource "alicloud_security_group" "dev-sg" {

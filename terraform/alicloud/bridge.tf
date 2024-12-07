@@ -41,9 +41,9 @@ resource "alicloud_nat_gateway" "bridge_int_nat_gw1" {
 resource "alicloud_eip_association" "bridge_int_nat_assoc1" {
   count = var.env_name != "dev" ? 1 : 0
   provider          = alicloud.bridge
-  allocation_id = alicloud_eip_address.bridge_eip_addr_snat1.id
+  allocation_id = alicloud_eip_address.bridge_eip_addr_snat1[count.index].id
   instance_type = "Nat"
-  instance_id   = alicloud_nat_gateway.bridge_int_nat_gw1.id
+  instance_id   = alicloud_nat_gateway.bridge_int_nat_gw1[count.index].id
 }
 
 resource "alicloud_eip_address" "bridge_eip_addr_snat1" {
@@ -56,9 +56,9 @@ resource "alicloud_eip_address" "bridge_eip_addr_snat1" {
 resource "alicloud_snat_entry" "bridge_int_nat_snat1" {
   count = var.env_name != "dev" ? 1 : 0
   provider          = alicloud.bridge
-  snat_table_id     = alicloud_nat_gateway.bridge_int_nat_gw1.snat_table_ids
-  source_vswitch_id = alicloud_vswitch.bridge_vswitch_a.id
-  snat_ip           = alicloud_eip_address.bridge_eip_addr_snat1.ip_address
+  snat_table_id     = alicloud_nat_gateway.bridge_int_nat_gw1[count.index].snat_table_ids
+  source_vswitch_id = alicloud_vswitch.bridge_vswitch_a[count.index].id
+  snat_ip           = alicloud_eip_address.bridge_eip_addr_snat1[count.index].ip_address
 }
 
 // SGRP

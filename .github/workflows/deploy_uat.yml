@@ -43,9 +43,6 @@ jobs:
           replace: "uat"
           regex: false
           include: "terraform/alicloud/backend.tf"      
-      
-      - name: View Contents
-        run: cat terraform/alicloud/backend.tf
 
       - name: Terraform Init
         id: init

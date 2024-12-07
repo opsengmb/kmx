@@ -40,7 +40,7 @@ resource "alicloud_slb_listener" "listener" {
 
 resource "alicloud_slb_acl" "acl" {
   count = var.env_name == "dev" ? 1 : 0
-  name       = "${var.name}-${random_integer.default.result}"
+  name       = "${var.env_name}-${var.project}-clb-acl"
   ip_version = "ipv4"
 }
 

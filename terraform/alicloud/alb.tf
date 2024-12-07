@@ -1,6 +1,7 @@
 data "alicloud_alb_zones" "default" {}
 
 resource "alicloud_alb_load_balancer" "alb" {
+  count = var.env_name != "dev" ? 1 : 0
   vpc_id                 = module.vpc.vpc_id
   resource_group_id     = alicloud_resource_manager_resource_group.rg.id 
   address_type           = "Internet"

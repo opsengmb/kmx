@@ -23,6 +23,7 @@ resource "alicloud_slb_listener" "listener" {
   cookie                    = "tfslblistenercookie"
   health_check              = "on"
   health_check_type         = "tcp"
+  health_check_connect_port = 8080
   unhealthy_threshold       = 8
   health_check_timeout      = 8
   health_check_interval     = 5
@@ -37,6 +38,37 @@ resource "alicloud_slb_listener" "listener" {
   request_timeout = 80
   idle_timeout    = 30
 }
+
+resource "alicloud_slb_listener" "http-listener" {
+  count = var.env_name == "dev" ? 1 : 0
+  load_balancer_id          = alicloud_slb_load_balancer.clb[count.index].id
+  backend_port              = 80
+  frontend_port             = 80
+  protocol                  = "http"
+  bandwidth                 = -1
+  sticky_session            = "on"
+  sticky_session_type       = "insert"
+  cookie_timeout            = 86400
+  cookie                    = "tfslblistenercookie"
+  health_check              = "on"
+  health_check_connect_port = 80
+  health_check_type         = "tcp"
+  unhealthy_threshold       = 8
+  health_check_timeout      = 8
+  health_check_interval     = 5
+  health_check_http_code    = "http_2xx,http_3xx"
+  x_forwarded_for {
+    retrive_slb_ip = true
+    retrive_slb_id = true
+  }
+  acl_status      = "on"
+  acl_type        = "white"
+  acl_id          = alicloud_slb_acl.acl[count.index].id
+  request_timeout = 80
+  idle_timeout    = 30
+}
+
+
 
 resource "alicloud_slb_acl" "acl" {
   count = var.env_name == "dev" ? 1 : 0

@@ -94,6 +94,7 @@ resource "alicloud_slb_rule" "default" {
   load_balancer_id = alicloud_slb_load_balancer.clb[count.index].id
   frontend_port    = alicloud_slb_listener.listener[count.index].frontend_port
   name             = "${var.env_name}-${var.project}-clb-server-tcp-rule"
+  url              = "/"
   server_group_id  = alicloud_slb_server_group.default[count.index].id
 }
 
@@ -117,6 +118,7 @@ resource "alicloud_slb_rule" "http-default" {
   load_balancer_id = alicloud_slb_load_balancer.clb[count.index].id
   frontend_port    = alicloud_slb_listener.http-listener[count.index].frontend_port
   name             = "${var.env_name}-${var.project}-clb-server-http-rule"
+  url              = "/"
   server_group_id  = alicloud_slb_server_group.http-default[count.index].id
 }
 

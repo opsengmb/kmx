@@ -133,6 +133,15 @@ resource "alicloud_security_group_rule" "dev-http" {
   cidr_ip           = var.vpc_cidr
 }
 
+resource "alicloud_security_group_rule" "dev-http-default" {
+  count = var.env_name == "dev" ? 1 : 0
+  type              = "ingress"
+  ip_protocol       = "tcp"
+  port_range        = "80/80"
+  security_group_id = alicloud_security_group.dev-sg[count.index].id
+  cidr_ip           = var.vpc_cidr
+}
+
 resource "alicloud_security_group_rule" "dev-http-egress" {
   count = var.env_name == "dev" ? 1 : 0
   type              = "egress"

@@ -87,10 +87,19 @@ resource "alicloud_slb_acl_entry_attachment" "allow-all" {
 }
 */
 
+// listener tcp
+
+resource "alicloud_slb_rule" "default" {
+  load_balancer_id = alicloud_slb_load_balancer.clb[count.index].id
+  frontend_port    = alicloud_slb_listener.listener[count.index].frontend_port
+  name             = "${var.env_name}-${var.project}-clb-server-tcp-rule"
+  server_group_id  = alicloud_slb_server_group.default[count.index].id
+}
+
 resource "alicloud_slb_server_group" "default" {
   count = var.env_name == "dev" ? 1 : 0
   load_balancer_id = alicloud_slb_load_balancer.clb[count.index].id
-  name             = "${var.env_name}-${var.project}-clb-server-attachment"
+  name             = "${var.env_name}-${var.project}-clb-server-attachment-tcp"
 }
 
 resource "alicloud_slb_server_group_server_attachment" "server_attachment" {
@@ -102,6 +111,14 @@ resource "alicloud_slb_server_group_server_attachment" "server_attachment" {
 }
 
 // listner http
+resource "alicloud_slb_rule" "http-default" {
+  load_balancer_id = alicloud_slb_load_balancer.clb[count.index].id
+  frontend_port    = alicloud_slb_listener.http-listener[count.index].frontend_port
+  name             = "${var.env_name}-${var.project}-clb-server-http-rule"
+  server_group_id  = alicloud_slb_server_group.http-default[count.index].id
+}
+
+
 resource "alicloud_slb_server_group" "http-default" {
   count = var.env_name == "dev" ? 1 : 0
   load_balancer_id = alicloud_slb_load_balancer.clb[count.index].id

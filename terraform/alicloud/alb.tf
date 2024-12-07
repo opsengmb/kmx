@@ -26,6 +26,7 @@ resource "alicloud_alb_load_balancer" "alb" {
   }
 }
 
+/*
 // listener port 80
 resource "alicloud_alb_listener" "http_80" {
   count = var.env_name != "dev" ? 1 : 0
@@ -47,7 +48,7 @@ resource "alicloud_alb_listener" "http_80" {
   }
 }
 
-/*
+
 // listener port 443
 resource "alicloud_alb_listener" "https_443" {
   load_balancer_id     = alicloud_alb_load_balancer.alb.id

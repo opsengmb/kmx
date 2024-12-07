@@ -22,7 +22,7 @@ resource "alicloud_vswitch" "bridge_vswitch_a" {
   count = var.env_name != "dev" ? 1 : 0
   provider          = alicloud.bridge
   vswitch_name = "${var.env_name}-${var.project}-vswitch-a"
-  vpc_id       = alicloud_vpc.bridge_vpc.id
+  vpc_id       = alicloud_vpc.bridge_vpc[count.index].id
   cidr_block   = var.bridge_pub_a
   zone_id      = data.alicloud_zones.bridge_zones.zones.0.id
 }
@@ -34,7 +34,7 @@ resource "alicloud_nat_gateway" "bridge_int_nat_gw1" {
   vpc_id           = alicloud_vpc.bridge_vpc.id
   nat_gateway_name = "${var.env_name}-${var.project}-ingw1"
   payment_type     = "PayAsYouGo"
-  vswitch_id       = alicloud_vswitch.bridge_vswitch_a.id
+  vswitch_id       = alicloud_vswitch.bridge_vswitch_a[count.index].id
   nat_type         = "Enhanced"
 }
 

@@ -10,6 +10,46 @@ resource "alicloud_slb_load_balancer" "clb" {
   instance_charge_type = "PayBySpec"
 }
 
+resource "alicloud_slb_listener" "listener" {
+  count = var.env_name == "dev" ? 1 : 0
+  load_balancer_id          = alicloud_slb_load_balancer.clb[count.index].id
+  backend_port              = 8080
+  frontend_port             = 8080
+  protocol                  = "tcp"
+  bandwidth                 = -1
+  sticky_session            = "on"
+  sticky_session_type       = "insert"
+  cookie_timeout            = 86400
+  cookie                    = "tfslblistenercookie"
+  health_check              = "on"
+  health_check_type         = "tcp"
+  unhealthy_threshold       = 8
+  health_check_timeout      = 8
+  health_check_interval     = 5
+  health_check_http_code    = "http_2xx,http_3xx"
+  x_forwarded_for {
+    retrive_slb_ip = true
+    retrive_slb_id = true
+  }
+  acl_status      = "on"
+  acl_type        = "white"
+  acl_id          = alicloud_slb_acl.acl[count.index].id
+  request_timeout = 80
+  idle_timeout    = 30
+}
+
+resource "alicloud_slb_acl" "acl" {
+  count = var.env_name == "dev" ? 1 : 0
+  name       = "${var.name}-${random_integer.default.result}"
+  ip_version = "ipv4"
+}
+
+resource "alicloud_slb_acl_entry_attachment" "allow-all" {
+  count = var.env_name == "dev" ? 1 : 0
+  acl_id  = alicloud_slb_acl.acl[count.index].id
+  entry   = "0.0.0.0/0"
+  comment = "Allow all"
+}
 
 resource "alicloud_slb_server_group" "default" {
   count = var.env_name == "dev" ? 1 : 0

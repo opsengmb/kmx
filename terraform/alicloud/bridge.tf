@@ -68,7 +68,7 @@ resource "alicloud_security_group" "bridge-sg" {
   resource_group_id = alicloud_resource_manager_resource_group.rg.id
   name        = "${var.env_name}-${var.project}-bridge-sg"
   description = "${var.env_name}-${var.project} security group"
-  vpc_id = alicloud_vpc.bridge_vpc.id
+  vpc_id = alicloud_vpc.bridge_vpc[count.index].id
   lifecycle {
     create_before_destroy = true
   }
@@ -143,7 +143,7 @@ resource "alicloud_instance" "bridge_ecs_instance_1" {
     image_id             = var.bridge_image_id
     instance_type        = "ecs.g7.large"
     security_groups      = [alicloud_security_group.bridge-sg.id]
-    vswitch_id           = alicloud_vswitch.bridge_vswitch_a.id
+    vswitch_id           = alicloud_vswitch.bridge_vswitch_a[count.index].id
     password             = "dynamic_random_password"
     system_disk_category = "cloud_essd"
     system_disk_size     = 100
@@ -166,5 +166,5 @@ resource "alicloud_eip_association" "bridge_eip_assoc" {
     count = var.env_name != "dev" ? 1 : 0
     provider    = alicloud.bridge
     instance_id = alicloud_instance.bridge_ecs_instance_1.id
-    allocation_id = alicloud_eip_address.bridge_eip.id
+    allocation_id = alicloud_eip_address.bridge_eip[count.index].id
 }

@@ -1,6 +1,6 @@
 resource "alicloud_slb_load_balancer" "clb-mtx" {
   count = var.env_name == "dev" ? 1 : 0
-  load_balancer_name = "${var.env_name}-${var.project}-clb-mtx"
+  load_balancer_name = "${var.env_name}-metamaxxx-clb"
   address_type       = "internet"
   load_balancer_spec = "slb.s2.small"
   vswitch_id         = module.vpc.vpc_id

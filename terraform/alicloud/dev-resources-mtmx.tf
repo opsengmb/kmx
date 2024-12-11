@@ -13,7 +13,7 @@ resource "alicloud_slb_load_balancer" "clb-mtx" {
 resource "alicloud_slb_listener" "listener-mtx" {
   count = var.env_name == "dev" ? 1 : 0
   load_balancer_id          = alicloud_slb_load_balancer.clb-mtx[count.index].id
-  server_group_id           = alicloud_slb_server_group.default[count.index].id
+  server_group_id           = alicloud_slb_server_group.default-mtx[count.index].id
   backend_port              = 8080
   frontend_port             = 8080
   protocol                  = "tcp"
@@ -41,7 +41,7 @@ resource "alicloud_slb_listener" "listener-mtx" {
 resource "alicloud_slb_listener" "http-listener-mtx" {
   count = var.env_name == "dev" ? 1 : 0
   load_balancer_id          = alicloud_slb_load_balancer.clb-mtx[count.index].id
-  server_group_id           = alicloud_slb_server_group.http-default[count.index].id
+  server_group_id           = alicloud_slb_server_group.http-default-mtx[count.index].id
   backend_port              = 80
   frontend_port             = 80
   protocol                  = "http"

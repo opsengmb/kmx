@@ -69,6 +69,11 @@ jobs:
       - name: View Contents
         run: ls -l
 
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.2 
+
       - name: Find and Replace
         uses: jacobtomlinson/gha-find-replace@v3
         with:
@@ -121,6 +126,11 @@ jobs:
            
       - name: View Contents
         run: ls -l
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.2 
 
       - name: Find and Replace
         uses: jacobtomlinson/gha-find-replace@v3

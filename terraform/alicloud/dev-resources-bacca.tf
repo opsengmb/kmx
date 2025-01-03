@@ -14,14 +14,15 @@ resource "alicloud_slb_listener" "listener-bacca" {
   count = var.env_name == "dev" ? 1 : 0
   load_balancer_id          = alicloud_slb_load_balancer.clb-bacca[count.index].id
   server_group_id           = alicloud_slb_server_group.default-bacca[count.index].id
-  backend_port              = 8080
   frontend_port             = 8080
   protocol                  = "tcp"
   bandwidth                 = -1
   cookie_timeout            = 86400
   cookie                    = "tfslblistenercookie"
   health_check              = "on"
-  health_check_type         = "tcp"
+  health_check_type         = "http"
+  health_check_domain       = "dev-kumaxx-baccarat-be.encoregames-uat.live"
+  health_check_uri          = "/up"
   health_check_connect_port = 8080
   unhealthy_threshold       = 8
   health_check_timeout      = 8
@@ -42,7 +43,6 @@ resource "alicloud_slb_listener" "http-listener-bacca" {
   count = var.env_name == "dev" ? 1 : 0
   load_balancer_id          = alicloud_slb_load_balancer.clb-bacca[count.index].id
   server_group_id           = alicloud_slb_server_group.http-default-bacca[count.index].id
-  backend_port              = 80
   frontend_port             = 80
   protocol                  = "http"
   bandwidth                 = -1
@@ -53,6 +53,8 @@ resource "alicloud_slb_listener" "http-listener-bacca" {
   health_check              = "on"
   health_check_connect_port = 80
   health_check_type         = "http"
+  health_check_domain       = "dev-kumaxx-baccarat-be.encoregames-uat.live"
+  health_check_uri          = "/up"
   unhealthy_threshold       = 8
   health_check_timeout      = 8
   health_check_interval     = 5
